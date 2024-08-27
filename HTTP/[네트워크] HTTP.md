@@ -1,7 +1,5 @@
 # HTTP
 
-SSL은 몇 가지 보안 문제로 인해 TLS(Transport Layer Security)로 대체됨
-
 HTTP는 `Hypertext Transfer Protocol`의 줄임말이며 `world-wide web`(WWW)에서 데이터를 소통하는 방법입니다.
 
 <aside>
