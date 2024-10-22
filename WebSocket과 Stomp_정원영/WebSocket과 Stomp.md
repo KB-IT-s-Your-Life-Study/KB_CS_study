@@ -21,7 +21,67 @@
         - Publish-Subscribe 구조: 메시지를 공급하는 주체와 소비하는 주체를 분리해 메시징을 제공
         - Message Broker: 발신자가 메시지를 발행하면 수신자들이 발행된 메시지를 수신하도록 메시지를 전달하는 주체
 
-### **구현 과정**
+```
+GET /chat HTTP/1.1
+Host: localhost:8080
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Version: 13
+Origin: http://localhost:9000
+```
+
+**GET /chat HTTP/1.1**  
+웹소켓의 통신 요청에서,
+HTTP 버전은 1.1 이상이어야하고 GET 메서드를 사용해야햔다.
+
+ 
+**Upgrade**  
+프로토콜을 전환하기 위해 사용하는 헤더.
+웹소켓 요청시에는 반스에 websocket 이라는 값을 가지며,
+이 값이 없거나 다른 값이면 cross-protocol attack 이라고 간주하여 웹 소켓 접속을 중지시킨다.
+
+ 
+
+**Connection**  
+현재의 전송이 완료된 후 네트워크 접속을 유지할 것인가에 대한 정보.
+웹 소켓 요청 시에는 반드시 Upgrade 라는 값을 가진다.
+Upgrade 와 마찬가지로 이 값이 없거나 다른 값이면 웹소켓 접속을 중지시킨다.
+
+ 
+
+**Sec-WebSocket-Key**   
+유효한 요청인지 확인하기 위해 사용하는 키 값
+
+ 
+
+**Sec-WebSocket-Protocol**  
+사용하고자 하는 하나 이상의 웹 소켓 프로토콜 지정.
+필요한 경우에만 사용
+
+ 
+
+**Sec-WebSocket-Version**  
+클라이언트가 사용하고자 하는 웹소켓 프로토콜 버전.
+현재 최신 버전 13
+
+ 
+## 웹 소켓이 나오기 전까지의 통신 방식
+### Polling 방식
+일정한 주기로 서버에 요청(Request)을 보내는 방법
+setTimeout, setInterval 등으로 일정 주기마다 서버에 요청(Request)을 보냄
+
+- 단점
+    - 불필요한 Request 와 Connection을 생성하여 서버에 부담을 준다.
+    - 요청 주기가 짧을 수록 부하가 커진다.
+    - '일정 주기마다' 요청을 보내는 것이기 때문에 실시간이라고 보기에 애매하다.
+    - 요청 주기가 짧으면 실시간 처럼 보이겠지만, 실제로 실시간은 아니다.
+    - HTTP 통신을 하기 때문에 Request, Response 헤더가 불필요하게 크다.
+
+<hr>
+
+## **구현 과정**
 
 ### **Spring Framework에서 WebSocket 설정**
 
