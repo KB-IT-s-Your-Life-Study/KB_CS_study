@@ -1,22 +1,3 @@
----
-title: "[CS][PJ] WebSocket과 Stomp"
-excerpt: ""
-
-categories:
-  - PJ
-tags:
-  - [CS, 스터디, PJ]
-# toc(Table of Contents.) : true시 포스트의 목차가 보임.
-toc: true
-# true로 해주면 목차가 스크롤을 따라 움직이게 됨.
-toc_sticky: true
-
-# date : 글 처음 작성일
-date: 2024-10-20
-# last_modified_at : 글 마지막 수정일
-last_modified_at: 2024-10-20
----
-
 # WebSocket과 STOMP
 
 ### 실시간 채팅 기능을 구현하기 위해 WebSocket과 STOMP 프로토콜을 활용하여, 서버와 클라이언트 간의 비동기 통신을 가능하게 함
