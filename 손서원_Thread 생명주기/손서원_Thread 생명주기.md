@@ -97,7 +97,7 @@ Java의 Thread 특징:
 
 ## Thread의 생명주기
 
-![image.png](image%201.png)
+<img src="image%201.png" alt="image" width="600"/>
 
 ### 1. Thread 객체 생성 - New
 
