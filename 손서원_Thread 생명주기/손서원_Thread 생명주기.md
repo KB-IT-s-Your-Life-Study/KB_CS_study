@@ -90,7 +90,7 @@
         ```
         
 
-Java의 Thread 특징: ❓ 여기 전반적으로 아예 모르겠어요.
+Java의 Thread 특징: 
 
 - OS Thread와 1대 1로 매핑됨
 - JVM에서 OS의 Thread와 매핑을 요청
