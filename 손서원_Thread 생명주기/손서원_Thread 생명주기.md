@@ -40,6 +40,179 @@
                             // 잠시 멈춰서 다른 스레드로 전환 기회를 줌
                             Thread.sleep(100);
                         } catch (Interrupted함
+                                } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.out.println(threadName + " was interrupted.");
+                        }
+                    }
+                    System.out.println(threadName + " has finished execution.");
+                }
+            }
+
+            public static void main(String[] args) {
+                Practice practice = new Practice();
+
+                Thread thread1 = new Thread(practice.new ThreadByRunnable("Thread 1"));
+                Thread thread2 = new Thread(practice.new ThreadByRunnable("Thread 2"));
+                Thread thread3 = new Thread(practice.new ThreadByRunnable("Thread 3"));
+
+                // 스레드 시작
+                thread1.start();
+                thread2.start();
+                thread3.start();
+            }
+        }
+
+        ```
+
+        결과
+
+        ```
+        Thread 1 is running, iteration: 0
+        Thread 2 is running, iteration: 0
+        Thread 3 is running, iteration: 0
+        Thread 3 is running, iteration: 1
+        Thread 2 is running, iteration: 1
+        Thread 1 is running, iteration: 1
+        Thread 1 is running, iteration: 2
+        Thread 2 is running, iteration: 2
+        Thread 3 is running, iteration: 2
+        Thread 2 is running, iteration: 3
+        Thread 1 is running, iteration: 3
+        Thread 3 is running, iteration: 3
+        Thread 2 is running, iteration: 4
+        Thread 1 is running, iteration: 4
+        Thread 3 is running, iteration: 4
+        Thread 2 has finished execution.
+        Thread 1 has finished execution.
+        Thread 3 has finished execution.
+
+        Process finished with exit code 0
+        ```
+
+
+Java의 Thread 특징: 
+
+- OS Thread와 1대 1로 매핑됨
+- JVM에서 OS의 Thread와 매핑을 요청
+
+## Thread의 생명주기
+
+<img src="image%201.png" alt="image" width="600"/>
+
+### 1. Thread 객체 생성 - New
+
+- new 키워드를 통해 Thread 객체를 생성
+- 아직 start() 메서드를 호출하지 않은 상태
+
+**Thread 객체를 만드는 두가지 방법**
+
+- 1.  Thread 객체를 상속 받아서 구현하는 방식
+
+    ```java
+    class ThreadExample1 extends Thread {
+        @Override
+        public void run() {
+    			...
+        }
+    }
+
+    ThreadExample1 thread1 = practice.new ThreadExample1();
+    ```
+
+- 2.  Runnable 인터페이스를 구현하는 방식
+
+    ```java
+    class ThreadExample2 implements Runnable {
+        @Override
+        public void run() {
+    			...
+        }
+    }
+
+    Thread thread2 = new Thread(practice.new ThreadExample2());
+    ```
+
+
+⇒ Java에서는 Runnable 인터페이스 구현 방식을 더 지향
+
+이유: 
+
+- Java는 다중 상속이 불가능하기 때문에 Thread 클래스를 상속 받으면 다른 클래스를 상속받을 수 없다.
+- 인터페이스를 사용함으로써 스레드의 동작과, 스레드의 실행 객체를 분리할 수 있어, 코드가 더 유연해진다. → 유연한 설계 및 재사용성을 높일 수 있음
+
+    예시)
+
+    스레드의 작업을 정의한 Task 클래스 - 동일 run 동작 내용
+
+    ```java
+    static class Task ~~~~~ {
+        private final String taskName;
+
+        public Task(String taskName) {
+            this.taskName = taskName;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 5; i++) {
+                System.out.println(taskName + " - iteration: " + i);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println(taskName + " completed.");
+        }
+    }
+    ```
+
+    다른 사용 방법
+
+    Runnable 인터페이스 구현 시 - 스레드의 작업을 정의한 작업 (Task) 객체를 만들고 이 객체를 할당하고 싶은 Thread 객체 
+
+    ```java
+    Task task = new Task("Shared Task");
+
+    // 같은 작업(Task)을 두 개의 스레드 객체에 전달하여 실행
+    Thread thread1 = new Thread(task);
+    Thread thread2 = new Thread(task);
+
+    // 스레드 실행
+    thread1.start();
+    thread2.start();
+    ```
+
+    Thread 상속 시 - 작업 (Task)이 Thread에 종속되기 때문에, 작업 정의와 스레드 실행을 분리할 수 없음  
+
+    ```java
+    // Thread 객체를 상속한 TaskThread를 두 개 생성
+    TaskThread thread1 = new Task("Same Task 1");
+    TaskThread thread2 = new Task("Same Task 2");
+
+    // 각각의 Thread 객체를 실행
+    thread1.start();
+    thread2.start();
+    ```
+
+    ⇒ Runnable 인터페이스로 구현하면 동일 작업을 정의한 Task 객체를 1번만 생성해 놓으면 어느 스레드던지 가져다 쓸 수 있어서 작업 객체 생성과 , 스레드 실행을 분리할 수 있고 재사용성이 높아짐.
+        반면 Thread 상속으로 구현 시에는 작업이 스레드에 종속되기 때문에 매번 새로 스레드 생성 시마다 동일 작업임에도 작업을 재정의, 재생성 해줘야 함.
+
+
+### 2. Thread 객체 실행 - Runnable (실행 대기, 실행)
+
+- thread.**start()**를 호출하면 적용되는 상태
+- 크게 2가지 메서드, start()와 run()이 이 상태에서 쓰임
+
+ run()
+
+- 현재 실행중인 Thread 내에서 단순히 선언되어 있는 메서드 run()을 호출함으로써 Thread를 실행 상태로 바꿈 (즉, 새로운 스레드를 생성하는 것이 아님)
+- **Runnable (실행 대기) 상태** 돌입 시, **현재 실행중인 Thread의 Stack 영역을 차지**해서 실행이 끝날 때까지 **다른 메서드를 호출할 수 없음**.
+
+start()
+
+- 스레드를 실행 대기 상태로 변경시킴
 - 이후 JVM scheduling에 의해서 new에서 running 상태로 변경됨
 
     ⇒ 병렬로 실행하기 위해선, start 메서드를 호출해야 한다.
